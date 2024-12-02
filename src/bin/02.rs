@@ -30,13 +30,8 @@ pub fn part_two(input: &str) -> Option<u32> {
                 .enumerate()
                 .filter(|(_i, &x)| !(x <= -1 && x >= -3))
                 .collect();
-            let positive_version: Vec<_> = diffs
-                .iter()
-                .enumerate()
-                .filter(|(_i, &x)| !(x >= 1 && x <= 3))
-                .collect();
 
-            if negative_version.len() == 0 || positive_version.len() == 0 {
+            if negative_version.len() == 0 {
                 return true;
             }
 
@@ -57,6 +52,24 @@ pub fn part_two(input: &str) -> Option<u32> {
                 }
             }
 
+            if negative_version.len() == 2 {
+                let left = negative_version[0];
+                let right = negative_version[1];
+
+                if left.0 + 1 == right.0 {
+                    let diff = left.1 + right.1;
+                    if diff <= -1 && diff >= -3 {
+                        return true;
+                    }
+                }
+            }
+
+            let positive_version: Vec<_> = diffs
+                .iter()
+                .enumerate()
+                .filter(|(_i, &x)| !(x >= 1 && x <= 3))
+                .collect();
+
             if positive_version.len() == 1 {
                 let (discontinuity, diff) = positive_version[0];
 
@@ -74,18 +87,6 @@ pub fn part_two(input: &str) -> Option<u32> {
                 }
             }
 
-            if negative_version.len() == 2 {
-                let left = negative_version[0];
-                let right = negative_version[1];
-
-                if left.0 + 1 == right.0 {
-                    let diff = left.1 + right.1;
-                    if diff <= -1 && diff >= -3 {
-                        return true;
-                    }
-                }
-            }
-
             if positive_version.len() == 2 {
                 let left = positive_version[0];
                 let right = positive_version[1];
@@ -98,7 +99,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                 }
             }
 
-            false
+            positive_version.len() == 0
         })
         .count();
 

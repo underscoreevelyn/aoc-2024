@@ -1,4 +1,4 @@
-use advent_of_code::DIRECTIONS;
+use advent_of_code::directions::DIRECTIONS;
 
 advent_of_code::solution!(4);
 

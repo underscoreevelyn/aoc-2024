@@ -1,4 +1,4 @@
-use advent_of_code::directions::DIRECTIONS;
+use advent_of_code::directions::{Direction, DIRECTIONS};
 
 advent_of_code::solution!(4);
 
@@ -9,7 +9,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     for x in 0..grid.len() {
         for y in 0..grid[0].len() {
             if grid[x][y] == 'X' {
-                for (dx, dy) in DIRECTIONS {
+                for Direction { x: dx, y: dy } in DIRECTIONS {
                     let x = x as i32;
                     let y = y as i32;
 

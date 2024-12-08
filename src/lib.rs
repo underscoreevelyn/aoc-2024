@@ -3,7 +3,7 @@ pub mod template;
 // Use this file to add helper functions and additional modules.
 
 pub mod directions {
-    #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+    #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
     pub struct Direction {
         pub x: i32,
         pub y: i32,
@@ -102,15 +102,16 @@ pub mod directions {
 pub mod grid {
     use std::{
         fmt::Display,
+        iter,
         ops::{Add, Index, IndexMut},
     };
 
     use crate::directions;
 
-    #[derive(Clone, PartialEq, Eq, Copy, Debug)]
+    #[derive(Clone, PartialEq, Eq, Copy, Debug, Hash)]
     pub struct Point {
-        x: i32,
-        y: i32,
+        pub x: i32,
+        pub y: i32,
     }
 
     impl Display for Point {
@@ -147,7 +148,7 @@ pub mod grid {
         }
     }
 
-    #[derive(Clone, PartialEq, Eq)]
+    #[derive(Clone, PartialEq, Eq, Debug, Hash)]
     pub struct Grid<T> {
         grid: Vec<Vec<T>>,
         size: (i32, i32),
@@ -270,6 +271,15 @@ pub mod grid {
             }
 
             &mut self.grid[index.x as usize][index.y as usize]
+        }
+    }
+
+    impl ToString for Grid<char> {
+        fn to_string(&self) -> String {
+            self.grid
+                .iter()
+                .map(|x| x.iter().chain(iter::once(&'\n')).collect::<String>())
+                .collect()
         }
     }
 

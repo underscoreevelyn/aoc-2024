@@ -21,6 +21,8 @@ pub mod directions {
     pub const DIRECTIONS: [Direction; 8] =
         [UPLEFT, LEFT, DOWNLEFT, DOWN, DOWNRIGHT, RIGHT, UPRIGHT, UP];
 
+    pub const CARDINAL_DIRECTIONS: [Direction; 4] = [UP, LEFT, DOWN, RIGHT];
+
     impl Direction {
         /// rotates 90 degrees clockwise
         pub fn clockwise(&self) -> Direction {
@@ -137,10 +139,32 @@ pub mod grid {
         }
     }
 
+    impl Add<&Point> for Point {
+        type Output = Point;
+
+        fn add(self, rhs: &Point) -> Self::Output {
+            Point {
+                x: self.x + rhs.x,
+                y: self.y + rhs.y,
+            }
+        }
+    }
+
     impl Add<directions::Direction> for Point {
         type Output = Point;
 
         fn add(self, rhs: directions::Direction) -> Self::Output {
+            Point {
+                x: self.x + rhs.x,
+                y: self.y + rhs.y,
+            }
+        }
+    }
+
+    impl Add<&directions::Direction> for Point {
+        type Output = Point;
+
+        fn add(self, rhs: &directions::Direction) -> Self::Output {
             Point {
                 x: self.x + rhs.x,
                 y: self.y + rhs.y,

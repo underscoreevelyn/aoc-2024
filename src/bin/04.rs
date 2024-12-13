@@ -10,13 +10,13 @@ pub fn part_one(input: &str) -> Option<u32> {
         for y in 0..grid[0].len() {
             if grid[x][y] == 'X' {
                 for Direction { x: dx, y: dy } in DIRECTIONS {
-                    let x = x as i32;
-                    let y = y as i32;
+                    let x = x as i64;
+                    let y = y as i64;
 
                     if x + dx * 3 < 0
                         || y + dy * 3 < 0
-                        || x + dx * 3 >= grid.len() as i32
-                        || y + dy * 3 >= grid[0].len() as i32
+                        || x + dx * 3 >= grid.len() as i64
+                        || y + dy * 3 >= grid[0].len() as i64
                     {
                         continue;
                     }

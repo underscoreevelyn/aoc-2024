@@ -3,10 +3,12 @@ pub mod template;
 // Use this file to add helper functions and additional modules.
 
 pub mod directions {
+    use std::ops::Mul;
+
     #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
     pub struct Direction {
-        pub x: i32,
-        pub y: i32,
+        pub x: i64,
+        pub y: i64,
     }
 
     pub const UP: Direction = Direction { x: -1, y: 0 };
@@ -57,6 +59,17 @@ pub mod directions {
             Direction {
                 x: (self.x - self.y) / factor,
                 y: (self.y + self.x) / factor,
+            }
+        }
+    }
+
+    impl Mul<i64> for Direction {
+        type Output = Direction;
+
+        fn mul(self, rhs: i64) -> Self::Output {
+            Direction {
+                x: self.x * rhs,
+                y: self.y * rhs,
             }
         }
     }
@@ -112,8 +125,8 @@ pub mod grid {
 
     #[derive(Clone, PartialEq, Eq, Copy, Debug, Hash)]
     pub struct Point {
-        pub x: i32,
-        pub y: i32,
+        pub x: i64,
+        pub y: i64,
     }
 
     impl Display for Point {
@@ -122,8 +135,8 @@ pub mod grid {
         }
     }
 
-    impl From<(i32, i32)> for Point {
-        fn from((x, y): (i32, i32)) -> Self {
+    impl From<(i64, i64)> for Point {
+        fn from((x, y): (i64, i64)) -> Self {
             Self { x, y }
         }
     }
@@ -175,7 +188,7 @@ pub mod grid {
     #[derive(Clone, PartialEq, Eq, Debug, Hash)]
     pub struct Grid<T> {
         grid: Vec<Vec<T>>,
-        size: (i32, i32),
+        size: (i64, i64),
     }
 
     pub trait IntoGrid<T> {
@@ -240,10 +253,10 @@ pub mod grid {
             PointIter::new(self.size)
         }
 
-        pub fn width(&self) -> i32 {
+        pub fn width(&self) -> i64 {
             self.size.0
         }
-        pub fn height(&self) -> i32 {
+        pub fn height(&self) -> i64 {
             self.size.1
         }
     }
@@ -308,9 +321,9 @@ pub mod grid {
     }
 
     pub struct PointIter {
-        size: i32,
-        width: i32,
-        cur: i32,
+        size: i64,
+        width: i64,
+        cur: i64,
     }
 
     impl Iterator for PointIter {
@@ -329,7 +342,7 @@ pub mod grid {
     }
 
     impl PointIter {
-        pub fn new((width, height): (i32, i32)) -> Self {
+        pub fn new((width, height): (i64, i64)) -> Self {
             Self {
                 size: width * height,
                 width,

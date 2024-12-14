@@ -118,7 +118,7 @@ pub mod grid {
     use std::{
         fmt::Display,
         iter,
-        ops::{Add, Index, IndexMut},
+        ops::{Add, AddAssign, Index, IndexMut},
     };
 
     use crate::directions;
@@ -182,6 +182,31 @@ pub mod grid {
                 x: self.x + rhs.x,
                 y: self.y + rhs.y,
             }
+        }
+    }
+
+    impl AddAssign<Point> for Point {
+        fn add_assign(&mut self, rhs: Point) {
+            self.x += rhs.x;
+            self.y += rhs.y;
+        }
+    }
+    impl AddAssign<&Point> for Point {
+        fn add_assign(&mut self, rhs: &Point) {
+            self.x += rhs.x;
+            self.y += rhs.y;
+        }
+    }
+    impl AddAssign<directions::Direction> for Point {
+        fn add_assign(&mut self, rhs: directions::Direction) {
+            self.x += rhs.x;
+            self.y += rhs.y;
+        }
+    }
+    impl AddAssign<&directions::Direction> for Point {
+        fn add_assign(&mut self, rhs: &directions::Direction) {
+            self.x += rhs.x;
+            self.y += rhs.y;
         }
     }
 

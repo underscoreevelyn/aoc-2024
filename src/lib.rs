@@ -26,6 +26,16 @@ pub mod directions {
     pub const CARDINAL_DIRECTIONS: [Direction; 4] = [UP, LEFT, DOWN, RIGHT];
 
     impl Direction {
+        pub fn from_arrow(c: char) -> Option<Direction> {
+            match c {
+                'v' => Some(DOWN),
+                '<' => Some(LEFT),
+                '^' => Some(UP),
+                '>' => Some(RIGHT),
+                _ => None,
+            }
+        }
+
         /// rotates 90 degrees clockwise
         pub fn clockwise(&self) -> Direction {
             Direction {
@@ -336,11 +346,20 @@ pub mod grid {
         }
     }
 
-    impl ToString for Grid<char> {
+    impl<T> ToString for Grid<T>
+    where
+        char: From<T>,
+        T: Copy,
+    {
         fn to_string(&self) -> String {
             self.grid
                 .iter()
-                .map(|x| x.iter().chain(iter::once(&'\n')).collect::<String>())
+                .map(|x| {
+                    x.iter()
+                        .map(|x| (*x).into())
+                        .chain(iter::once('\n'))
+                        .collect::<String>()
+                })
                 .collect()
         }
     }
@@ -414,6 +433,41 @@ pub mod grid {
                     (2, 1).into()
                 ]
             );
+        }
+    }
+}
+
+#[macro_export]
+macro_rules! char_enum {
+    (
+        $l:ident {
+            $($v:ident = $c:literal),+
+        }
+    ) => {
+        #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+        enum $l {
+            $($v),+
+        }
+
+        impl From<$l> for char {
+            fn from(value: $l) -> Self {
+                use $l::*;
+                match value {
+                    $($v => $c),+
+                }
+            }
+        }
+
+        impl TryFrom<char> for $l {
+            type Error = String;
+
+            fn try_from(value: char) -> Result<Self, Self::Error> {
+                use $l::*;
+                match value {
+                    $($c => Ok($v),)+
+                    _ => Err(format!("Unrecognized character {}", value)),
+                }
+            }
         }
     }
 }

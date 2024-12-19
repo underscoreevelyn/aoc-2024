@@ -471,3 +471,94 @@ macro_rules! char_enum {
         }
     }
 }
+
+pub mod djikstra {
+    use std::{
+        collections::{BinaryHeap, HashMap, HashSet},
+        hash::Hash,
+    };
+
+    #[derive(PartialEq, Eq)]
+    struct DjikstraState<T: Eq>(usize, T);
+
+    impl<T: Eq> PartialOrd for DjikstraState<T> {
+        fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+            Some(self.cmp(other))
+        }
+    }
+
+    // i'm explicitly violating the assumption of ord here...
+    impl<T: Eq> Ord for DjikstraState<T> {
+        fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+            other.0.cmp(&self.0)
+        }
+    }
+
+    // judge my shitty djikstra code
+    pub fn djikstra<State, F>(start: State, end: &[State], transition: F) -> Option<usize>
+    where
+        State: Hash + Eq + Copy, // + std::fmt::Debug,
+        F: Fn(State) -> Vec<(State, usize)>,
+    {
+        let mut next_states = BinaryHeap::new();
+        let mut seen_states = HashSet::new();
+
+        next_states.push(DjikstraState(0, start));
+
+        while let Some(DjikstraState(cost, state)) = next_states.pop() {
+            if seen_states.contains(&state) {
+                continue;
+            }
+            seen_states.insert(state);
+
+            // println!("visiting state {state:?}");
+
+            if end.contains(&state) {
+                return Some(cost);
+            }
+
+            for (next_state, transition_cost) in transition(state) {
+                next_states.push(DjikstraState(cost + transition_cost, next_state));
+            }
+        }
+
+        None
+    }
+
+    // i'm actually not sure if this is strictly correct
+    // and i'm too lazy to test because it solves the problem it was designed for correctly
+    pub fn djikstra_paths<State, F>(
+        start: State,
+        transition: F,
+    ) -> HashMap<State, (usize, Vec<State>)>
+    where
+        State: Hash + Eq + Copy + std::fmt::Debug,
+        F: Fn(State) -> Vec<(State, usize)>,
+    {
+        let mut next_states = BinaryHeap::new();
+        let mut states = HashMap::new();
+
+        next_states.push(DjikstraState(0, start));
+        states.insert(start, (0, vec![]));
+
+        while let Some(DjikstraState(cost, state)) = next_states.pop() {
+            for (next_state, transition_cost) in transition(state) {
+                let state_cost = cost + transition_cost;
+
+                if let Some(prev) = states.get_mut(&next_state) {
+                    if state_cost < prev.0 {
+                        *prev = (state_cost, vec![state]);
+                        next_states.push(DjikstraState(state_cost, next_state));
+                    } else if state_cost == prev.0 {
+                        prev.1.push(state);
+                    }
+                } else {
+                    states.insert(next_state, (state_cost, vec![state]));
+                    next_states.push(DjikstraState(state_cost, next_state));
+                }
+            }
+        }
+
+        states
+    }
+}

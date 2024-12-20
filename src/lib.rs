@@ -220,6 +220,22 @@ pub mod grid {
         }
     }
 
+    impl Point {
+        pub fn manhattan_distance(&self, other: &Point) -> i64 {
+            (self.x - other.x).abs() + (self.y - other.y).abs()
+        }
+
+        pub fn diagonal_distance(&self, other: &Point) -> i64 {
+            (self.x - other.x).abs().max((self.y - other.y).abs())
+        }
+
+        pub fn direct_distance_sq(&self, other: &Point) -> i64 {
+            let dx = self.x - other.x;
+            let dy = self.y - other.y;
+            dx * dx + dy * dy
+        }
+    }
+
     #[derive(Clone, PartialEq, Eq, Debug, Hash)]
     pub struct Grid<T> {
         grid: Vec<Vec<T>>,
